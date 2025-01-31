@@ -1,0 +1,15 @@
+
+[api]
+brave_api_key=""
+openai_api_key=""
+
+[search]
+results_per_query = 3
+bars_per_city = 3
+
+[model]
+name = "gpt-3.5-turbo"
+
+[tracking]
+log_file = "usage_logs.jsonl"
+max_cost_per_session = 0.50  # Optional: add budget limit
