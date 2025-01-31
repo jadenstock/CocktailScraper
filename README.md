@@ -39,43 +39,58 @@ src/
 
 ## TODO List
 
-### High Priority
-- [ ] Add tests for bar_finder component
-- [ ] Implement menu URL extraction
-- [ ] Add proper error handling for API failures
-- [ ] Add caching for API responses
+### Phase 1: Core Bar Finding & Cost Tracking
+- [ ] Fix price tracking for API queries
+  - [ ] Implement accurate token counting for CrewAI interactions
+  - [ ] Add detailed cost breakdown per API call
+  - [ ] Add running total cost display
+- [ ] Implement bar deduplication
+  - [ ] Design bar data model with unique identifiers
+  - [ ] Add logic to detect and merge duplicate entries
+  - [ ] Implement fuzzy matching for similar bar names
+- [ ] Add persistent storage for bars
+  - [ ] Design database schema
+  - [ ] Implement file I/O operations
+  - [ ] Add CRUD operations for bar data
+- [ ] Add tests for core functionality
+  - [ ] Unit tests for bar finder
+  - [ ] Cost tracking tests
+  - [ ] Storage tests
+
+### Phase 2: Menu Collection
+- [ ] Design menu URL extraction system
+  - [ ] Add support for different website structures
+  - [ ] Implement URL validation
+  - [ ] Add rate limiting and retry logic
+- [ ] Implement screenshot functionality
+  - [ ] Research and select screenshot tool
+  - [ ] Handle different viewport sizes
+  - [ ] Add error handling for failed captures
+
+### Phase 3: Menu Analysis
+- [ ] Implement OCR pipeline
+  - [ ] Select and integrate OCR library
+  - [ ] Add pre-processing for better accuracy
+  - [ ] Handle different menu formats
+- [ ] Add cocktail information extraction
+  - [ ] Design cocktail data model
+  - [ ] Implement ingredient parsing
+  - [ ] Add price extraction
+
+### Infrastructure & Improvements
+- [ ] Add proper logging system
+- [ ] Implement configuration validation
+- [ ] Add CI/CD pipeline
+- [ ] Add development documentation
+- [ ] Implement caching for API responses
 - [ ] Add rate limiting for API calls
 
-### Menu Scraping Component
-- [ ] Design menu scraping architecture
-- [ ] Implement screenshot capture functionality
-- [ ] Add URL validation and sanitization
-- [ ] Handle different menu formats (PDF, images, HTML)
-
-### OCR Component
-- [ ] Research and select OCR library
-- [ ] Implement basic OCR functionality
-- [ ] Add menu text extraction
-- [ ] Design cocktail information parser
-
-### Infrastructure
-- [ ] Add proper logging system
-- [ ] Implement data persistence layer
-- [ ] Add configuration validation
-- [ ] Add CI/CD pipeline
-- [ ] Add documentation for all components
-
-### Features
-- [ ] Add support for more search parameters
-- [ ] Implement cocktail menu versioning
-- [ ] Add support for price tracking
-- [ ] Add support for menu change detection
-
-### Documentation
-- [ ] Add API documentation
-- [ ] Add development setup guide
-- [ ] Add contribution guidelines
-- [ ] Document architecture decisions
+### Future Features
+- [ ] Add menu change detection
+- [ ] Implement price tracking over time
+- [ ] Add support for cocktail recommendations
+- [ ] Add support for bar ratings/reviews
+- [ ] Implement user feedback system
 
 # Configuration
 
