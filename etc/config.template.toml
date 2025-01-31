@@ -1,0 +1,5 @@
+[api]
+# Add your Brave API key here
+brave_api_key = ""
+# Add your OpenAI API key here
+openai_api_key = ""
