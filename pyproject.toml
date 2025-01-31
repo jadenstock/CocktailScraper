@@ -6,6 +6,7 @@ requires-python = ">=3.10,<3.13"
 dependencies = [
     "crewai==0.30.0",
     "langchain-community>=0.0.10",
+    "langchain-openai>=0.0.5",
     "openai>=1.0.0",
     "instructor>=0.4.0",
     "chromadb>=0.4.17,<0.5.0", # Version that embedchain expects # Explicitly include this to help resolver

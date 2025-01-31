@@ -1,9 +1,10 @@
 from crewai import Agent, Task, Crew
+from langchain_openai import ChatOpenAI
 from typing import List, Dict
 import json
 import os
 
-from core.tracking.usage_tracker import UsageTracker  # Changed to absolute import
+from core.tracking import UsageTracker
 from .search import BarSearch
 
 
@@ -22,7 +23,13 @@ class BarResearcher:
         os.environ["BRAVE_API_KEY"] = brave_api_key
         os.environ["OPENAI_API_KEY"] = openai_api_key
 
-        # Create researcher agent
+        # Configure LLM specifically for GPT-3.5-turbo
+        llm = ChatOpenAI(
+            model_name='gpt-3.5-turbo',
+            temperature=0.7
+        )
+
+        # Create researcher agent with specific LLM
         self.researcher = Agent(
             role='Cocktail Bar Researcher',
             goal='Find and summarize cocktail bars efficiently',
@@ -30,11 +37,7 @@ class BarResearcher:
             verbose=True,
             allow_delegation=False,
             tools=[self.bar_search.brave_tool],
-            llm_config={
-                "config_list": [{
-                    "model": model_config['name'],
-                }]
-            }
+            llm=llm  # Use our configured LLM
         )
 
     def create_search_task(self, city: str, num_bars: int = 3) -> Task:
