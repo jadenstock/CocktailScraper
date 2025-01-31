@@ -76,3 +76,19 @@ src/
 - [ ] Add development setup guide
 - [ ] Add contribution guidelines
 - [ ] Document architecture decisions
+
+# Configuration
+
+1. Copy the template configuration file:
+```bash
+cp etc/config.template.toml etc/config.toml
+```
+
+2. Add your API keys to `etc/config.toml`:
+```toml
+[api]
+brave_api_key = "your-brave-api-key"
+openai_api_key = "your-openai-api-key"
+```
+
+⚠️ Never commit your actual `config.toml` file - it's ignored by git for security.
