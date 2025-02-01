@@ -36,6 +36,8 @@ ENV/
 # Project specific
 usage_logs.jsonl
 etc/config.toml
+data/          # SQLite database and other data files
+*.db          # Any database files anywhere
 
 # Logs
 *.log
