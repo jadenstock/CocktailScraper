@@ -1,30 +1,48 @@
-from functools import lru_cache
 from langchain_community.tools import BraveSearch
 from typing import List, Dict
-import json
+import random
 
-def truncate_text(text: str, max_tokens: int = 1000) -> str:
-    """Truncate text to stay within token limit"""
-    return text[:max_tokens * 4]  # Simple approximation
 
 class BarSearch:
     def __init__(self, api_key: str, usage_tracker=None):
         self.brave_tool = BraveSearch.from_api_key(
             api_key=api_key,
             search_kwargs={
-                "count": 2,
-                "text_only": True,
-                "snippet_only": True
+                "count": 10,  # Increased result count
+                "text_only": False,  # Get full results
+                "snippet_only": False
             }
         )
         self.usage_tracker = usage_tracker
 
-    @lru_cache(maxsize=100)
-    def search(self, query: str, num_results: int = 2) -> List[Dict]:
-        """Perform a cached search for bars"""
+        # Search variations to get different types of bars
+        self.search_patterns = [
+            "best craft cocktail bars in {}",
+            "top mixology bars {}",
+            "hidden speakeasy bars {}",
+            "upscale cocktail lounges {}",
+            "innovative cocktail bars {}"
+        ]
+
+    def generate_search_query(self, city: str, excluded_bars: List[str] = None) -> str:
+        """Generate a search query, incorporating exclusions"""
+        # Pick a random search pattern
+        pattern = random.choice(self.search_patterns)
+        query = pattern.format(city)
+
+        # If we have bars to exclude, add them to the query
+        if excluded_bars and len(excluded_bars) > 0:
+            # Add exclusion terms, but limit to prevent query from getting too long
+            exclusions = ' '.join(f'-"{bar}"' for bar in excluded_bars[:5])
+            query = f"{query} {exclusions}"
+
+        return query
+
+    def search(self, query: str, num_results: int = 10) -> List[Dict]:
+        """Perform a search for bars"""
         if self.usage_tracker:
             self.usage_tracker.track_brave_search(query, num_results)
-        
+
         results = self.brave_tool.run(query)
         return self.process_results(results)
 
@@ -32,9 +50,13 @@ class BarSearch:
         """Process and clean up search results"""
         processed = []
         for result in results:
+            # Extract more detailed information
             processed.append({
-                'title': truncate_text(result.get('title', ''), 100),
-                'snippet': truncate_text(result.get('snippet', ''), 200),
-                'link': result.get('link', '')
+                'title': result.get('title', ''),
+                'snippet': result.get('snippet', ''),
+                'link': result.get('link', ''),
+                'description': result.get('description', ''),
+                'additional_links': result.get('additional_links', []),
+                'source': 'brave_search'  # Mark the source of this information
             })
         return processed
