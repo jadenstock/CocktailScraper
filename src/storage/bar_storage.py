@@ -89,20 +89,26 @@ class BarStorage:
 
     def get_bars(
             self,
-            city: str,
+            city: Optional[str] = None,
             limit: Optional[int] = None,
             include_raw: bool = False
     ) -> List[Dict]:
-        """Get all bars for a city"""
+        """Get bars, optionally filtered by city"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 conn.row_factory = sqlite3.Row
 
-                query = "SELECT * FROM bars WHERE city = ? ORDER BY discovered_at DESC"
+                if city:
+                    query = "SELECT * FROM bars WHERE city = ? ORDER BY discovered_at DESC"
+                    params = (city,)
+                else:
+                    query = "SELECT * FROM bars ORDER BY discovered_at DESC"
+                    params = ()
+
                 if limit:
                     query += f" LIMIT {limit}"
 
-                cursor = conn.execute(query, (city,))
+                cursor = conn.execute(query, params)
 
                 bars = []
                 for row in cursor:
@@ -171,3 +177,38 @@ class BarStorage:
         except sqlite3.Error as e:
             print(f"Error getting stats: {e}")
             return {}
+
+    def update_menu_info(self, bar_id: str, menu_urls: List[str], menu_data: Dict) -> bool:
+        """
+        Update a bar's menu information
+
+        Args:
+            bar_id: Unique identifier for the bar
+            menu_urls: List of discovered menu URLs
+            menu_data: Full menu data including cocktails, PDFs, etc.
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                # Store primary menu URL in menu_url column
+                primary_url = menu_urls[0] if menu_urls else None
+
+                # Update the bar record
+                conn.execute("""
+                    UPDATE bars 
+                    SET menu_url = ?,
+                        last_updated = ?,
+                        raw_data = json_set(
+                            COALESCE(raw_data, '{}'),
+                            '$.menu_data', ?
+                        )
+                    WHERE id = ?
+                """, (
+                    primary_url,
+                    datetime.now().isoformat(),
+                    json.dumps(menu_data),
+                    bar_id
+                ))
+                return True
+        except sqlite3.Error as e:
+            print(f"Error updating menu info: {e}")
+            return False

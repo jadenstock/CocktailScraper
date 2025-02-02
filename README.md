@@ -8,21 +8,43 @@ A CrewAI-based system for researching cocktail bars and menus.
 # Clone the repository
 git clone [your-repo-url]
 
-# Install dependencies
-invoke setup
+# Set up the project (creates directories, installs dependencies)
+invoke init
+
+# Copy the config template and add your API keys
+cp etc/config.template.toml etc/config.toml
 ```
 
 ## Usage
 
+Research bars in a city:
 ```bash
-# Research cocktail bars in a city
-invoke research --city "Seattle" --num-bars 3
+# Basic usage (defaults to 3 bars)
+invoke research --city="Seattle"
 
-# View usage statistics
+# Get more bars
+invoke research --city="New York" --num-bars=5
+```
+
+View discovered bars:
+```bash
+# See all cities and their bar counts
+invoke show-bars
+
+# See details for a specific city
+invoke show-bars --city="Seattle"
+```
+
+Manage data and logs:
+```bash
+# View API usage statistics
 invoke show-usage
 
 # Clean usage logs
 invoke clean-logs
+
+# Reset bar database (start fresh)
+invoke clean-db
 ```
 
 ## Project Structure
@@ -34,24 +56,41 @@ src/
 │   ├── menu_scraper/   # Menu screenshot capture
 │   └── menu_analyzer/  # OCR and analysis
 ├── core/               # Core infrastructure
-└── models/            # Data structures
+│   ├── config/        # Configuration management
+│   ├── tracking/      # Usage tracking
+│   └── utils/         # Utility functions
+├── models/            # Data structures
+└── storage/          # Data persistence
+
+data/                 # Local data storage
+└── bars.db          # SQLite database of discovered bars
 ```
+
+## Data Storage
+
+The project uses SQLite to store discovered bars. The database is automatically created in `data/bars.db` and includes:
+- Bar names and descriptions
+- Websites and menu URLs
+- Discovery timestamps
+- Search queries used to find each bar
+
+The database is gitignored and can be reset using `invoke clean-db`.
 
 ## TODO List
 
 ### Phase 1: Core Bar Finding & Cost Tracking
-- [ ] Fix price tracking for API queries
-  - [ ] Implement accurate token counting for CrewAI interactions
-  - [ ] Add detailed cost breakdown per API call
-  - [ ] Add running total cost display
-- [ ] Implement bar deduplication
-  - [ ] Design bar data model with unique identifiers
-  - [ ] Add logic to detect and merge duplicate entries
-  - [ ] Implement fuzzy matching for similar bar names
-- [ ] Add persistent storage for bars
-  - [ ] Design database schema
-  - [ ] Implement file I/O operations
-  - [ ] Add CRUD operations for bar data
+- [x] Fix price tracking for API queries
+  - [x] Implement accurate token counting for CrewAI interactions
+  - [x] Add detailed cost breakdown per API call
+  - [x] Add running total cost display
+- [x] Implement bar deduplication
+  - [x] Design bar data model with unique identifiers
+  - [x] Add logic to detect and merge duplicate entries
+  - [x] Implement fuzzy matching for similar bar names
+- [x] Add persistent storage for bars
+  - [x] Design database schema
+  - [x] Implement file I/O operations
+  - [x] Add CRUD operations for bar data
 - [ ] Add tests for core functionality
   - [ ] Unit tests for bar finder
   - [ ] Cost tracking tests
@@ -78,8 +117,8 @@ src/
   - [ ] Add price extraction
 
 ### Infrastructure & Improvements
-- [ ] Add proper logging system
-- [ ] Implement configuration validation
+- [x] Add proper logging system
+- [x] Implement configuration validation
 - [ ] Add CI/CD pipeline
 - [ ] Add development documentation
 - [ ] Implement caching for API responses
@@ -92,7 +131,7 @@ src/
 - [ ] Add support for bar ratings/reviews
 - [ ] Implement user feedback system
 
-# Configuration
+## Configuration
 
 1. Copy the template configuration file:
 ```bash
